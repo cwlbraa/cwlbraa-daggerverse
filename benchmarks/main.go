@@ -18,18 +18,19 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type CwlbraaBenchmarks struct{}
+
 const bigCat = "https://w.wallhaven.cc/full/jx/wallhaven-jxzzmp.jpg"
 const curlCat = "for i in {1..20}; do curl -s %s -o \"cat$i.jpg\" && sync && sleep 0.1; done"
 
-type CwlbraaBenchmarks struct{}
-
 func (m *CwlbraaBenchmarks) IoTest(ctx context.Context) error {
 	_, err := dag.Container().
-		WithEnvVariable("cache_bust", uuid.NewString()).
 		From("ubuntu:24.10").
 		WithExec([]string{"apt-get", "update"}).
 		WithExec([]string{"apt-get", "install", "-y", "curl", "coreutils"}).
-		WithExec([]string{"bash", "-c", fmt.Sprintf(curlCat, bigCat)}).
+		WithEnvVariable("cache_bust", uuid.NewString()).
+		WithNewFile("download.sh", fmt.Sprintf(curlCat, bigCat), dagger.ContainerWithNewFileOpts{Permissions: 0755}).
+		WithExec([]string{"bash", "-c", "./download.sh"}).
 		WithExec([]string{"ls", "-alh", "cat1.jpg"}).
 		Stdout(ctx)
 	return err

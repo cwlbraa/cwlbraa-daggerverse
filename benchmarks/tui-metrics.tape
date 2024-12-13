@@ -60,10 +60,12 @@ Output tui-metrics.gif
 Require echo
 
 Set Shell "zsh"
-Set FontSize 32
-Set Width 1200
-Set Height 600
+Set FontSize 10
+Set Width 1400
+Set Height 400
 
-Type "with-dev dagger call -vvv io-test" Sleep 500ms  Enter
+Type "bat -r 23:36 main.go" Enter
+Sleep 2s
+Type "dagger call -vvv io-test" Sleep 500ms  Enter
 
-Sleep 5s
+Sleep 18s
