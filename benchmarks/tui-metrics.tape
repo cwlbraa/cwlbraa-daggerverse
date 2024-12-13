@@ -68,4 +68,4 @@ Type "bat -r 23:36 main.go" Enter
 Sleep 2s
 Type "dagger call -vvv io-test" Sleep 500ms  Enter
 
-Sleep 18s
+Sleep 30s
