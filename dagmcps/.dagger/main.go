@@ -35,7 +35,7 @@ func New(
 	}
 }
 
-// Returns a container that echoes whatever string argument is provided
+// Build creates the dagmcps binary
 func (m *Dagmcps) Build(ctx context.Context) *dagger.File {
 	return dag.Container().
 		From("golang:latest").

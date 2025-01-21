@@ -42,6 +42,11 @@ COMMANDS
 Use ".stdlib | .doc <command>" for more information on a command.
 </result>
 `
+const cwdDescription = `
+the working directory to run the shell in.
+use this instead of trying to cd if you're asked to work on code local to the users' machine, like via the filesystem mcp.
+provide an absolute path, not a relative path.
+`
 
 func main() {
 	s := server.NewMCPServer(
@@ -51,12 +56,16 @@ func main() {
 		server.WithLogging(),
 	)
 
-	s.AddTool(mcp.NewTool("daggershell",
+	s.AddTool(mcp.NewTool("dagger_shell",
 		mcp.WithDescription(daggershellDescription),
 		mcp.WithString("cmd",
 			mcp.Required(),
 			mcp.Title("Command"),
 			mcp.Description(commandDescription),
+		),
+		mcp.WithString("cwd",
+			mcp.Title("Current Working Directory"),
+			mcp.Description(cwdDescription),
 		),
 	), shellHandler)
 
@@ -74,6 +83,13 @@ func shellHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallTo
 
 	// Create the dagger shell command
 	cmd := exec.CommandContext(ctx, "dagger", "shell", "-c", cmdStr)
+	cmd.Env = append(cmd.Env, os.Environ()...)
+	cmd.Env = append(cmd.Env, "NO_COLOR=1")
+
+	cwdStr, ok := request.Params.Arguments["cwd"].(string)
+	if ok {
+		cmd.Dir = cwdStr
+	}
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()
