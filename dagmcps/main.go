@@ -6,9 +6,42 @@ import (
 	"os"
 	"os/exec"
 
+	_ "embed"
+
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
+
+//go:embed dagger_manual.md
+var daggershellDescription string
+
+const commandDescription string = `the script to run in the dagger engine. 
+syntax is similar to bash, but uses dagger primitives instead of executables.
+use .stdlib to see what's available at the root.
+use .doc to inspect documentation.
+
+for example, ".stdlib | .doc" gives something like this:
+
+<result>
+COMMANDS
+  cache-volume   Constructs a cache volume for a given cache key.
+  container      Creates a scratch container.
+
+                 Optional platform argument initializes new containers to execute and publish as that platform. Platform defaults to that of the builder's
+                 host.
+  directory      Creates an empty directory.
+  engine         The Dagger engine container configuration and state
+  git            Queries a Git repository.
+  host           Queries the host environment.
+  http           Returns a file containing an http remote url content.
+  set-secret     Sets a secret given a user defined name to its plaintext and returns the secret.
+
+                 The plaintext value is limited to a size of 128000 bytes.
+  version        Get the current Dagger Engine version.
+
+Use ".stdlib | .doc <command>" for more information on a command.
+</result>
+`
 
 func main() {
 	s := server.NewMCPServer(
@@ -18,16 +51,14 @@ func main() {
 		server.WithLogging(),
 	)
 
-	tool := mcp.NewTool("daggershell",
-		mcp.WithDescription("execute dagger shell scripts"),
+	s.AddTool(mcp.NewTool("daggershell",
+		mcp.WithDescription(daggershellDescription),
 		mcp.WithString("cmd",
 			mcp.Required(),
-			mcp.Description("the script to run. syntax is similar to bash, but uses dagger primitives instead of executables"),
+			mcp.Title("Command"),
+			mcp.Description(commandDescription),
 		),
-	)
-
-	// Add tool handler
-	s.AddTool(tool, shellHandler)
+	), shellHandler)
 
 	fmt.Fprint(os.Stderr, "Starting Dagger MCP server on stdio transport")
 	if err := server.ServeStdio(s); err != nil {
