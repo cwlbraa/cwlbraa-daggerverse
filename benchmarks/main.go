@@ -105,7 +105,7 @@ func createModuleConfig(name string, depNames []string) map[string]interface{} {
 }
 
 // CwlbraaBenchmarksModules creates a stack of nested Dagger modules to benchmark performance
-func (m *CwlbraaBenchmarks) BenchmarkModules(ctx context.Context, cliBin *dagger.File) (*dagger.Directory, error) {
+func (m *CwlbraaBenchmarks) GenerateModules(ctx context.Context, cliBin *dagger.File) (*dagger.Directory, error) {
 	modGen := dag.Container().
 		From("golang:1.21").
 		WithMountedFile("/bin/dagger", cliBin).

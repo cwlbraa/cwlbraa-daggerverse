@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    {
+      "name": "mod0",
+      "source": "../mod0"
+    }
+  ],
+  "name": "mod1",
+  "sdk": "go"
+}

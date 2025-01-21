@@ -1,0 +1,26 @@
+{
+  "dependencies": [
+    {
+      "name": "mod10",
+      "source": "../mod10"
+    },
+    {
+      "name": "mod11",
+      "source": "../mod11"
+    },
+    {
+      "name": "mod12",
+      "source": "../mod12"
+    },
+    {
+      "name": "mod13",
+      "source": "../mod13"
+    },
+    {
+      "name": "mod14",
+      "source": "../mod14"
+    }
+  ],
+  "name": "mod16",
+  "sdk": "go"
+}
