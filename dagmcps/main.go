@@ -15,6 +15,9 @@ import (
 //go:embed dagger_manual.md
 var daggershellDescription string
 
+//go:embed developer_prompt.md
+var developerPrompt string
+
 const commandDescription string = `the script to run in the dagger engine. 
 syntax is similar to bash, but uses dagger primitives instead of executables.
 use .stdlib to see what's available at the root.
@@ -53,6 +56,7 @@ func main() {
 		"Dagger",
 		"0.0.1",
 		server.WithResourceCapabilities(true, true),
+		server.WithPromptCapabilities(false),
 		server.WithLogging(),
 	)
 
@@ -68,6 +72,8 @@ func main() {
 			mcp.Description(cwdDescription),
 		),
 	), shellHandler)
+
+	s.AddPrompt(mcp.NewPrompt("dagger_developer"), developerPromptHandler)
 
 	fmt.Fprint(os.Stderr, "Starting Dagger MCP server on stdio transport")
 	if err := server.ServeStdio(s); err != nil {
@@ -98,4 +104,12 @@ func shellHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallTo
 	}
 
 	return mcp.NewToolResultText(string(output)), nil
+}
+
+func developerPromptHandler(ctx context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+	messages := []mcp.PromptMessage{
+		mcp.NewPromptMessage(mcp.RoleAssistant, mcp.NewTextContent(developerPrompt)),
+		// mcp.NewPromptMessage(mcp.RoleAssistant, mcp.NewEmbeddedResource(mcp.ResourceContents{URI: "file://dagger_manual.md", MIMEType: "text/markdown"})),
+	}
+	return mcp.NewGetPromptResult("Do complete dev loops using dagger shell and the filesystem mcp", messages), nil
 }

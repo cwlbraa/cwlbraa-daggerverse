@@ -23,6 +23,13 @@ type Dagmcps struct {
 	Src *dagger.Directory
 }
 
+// Container packages the binary in a lightweight Alpine container
+func (m *Dagmcps) DagmcpsContainer(ctx context.Context) *dagger.Container {
+	return dag.Container().
+		From("alpine:latest").
+		WithFile("/usr/local/bin/dagmcps", m.Binary(ctx))
+}
+
 func New(
 	ctx context.Context,
 	// +optional
@@ -36,11 +43,11 @@ func New(
 }
 
 // Build creates the dagmcps binary
-func (m *Dagmcps) Build(ctx context.Context) *dagger.File {
+func (m *Dagmcps) Binary(ctx context.Context) *dagger.File {
 	return dag.Container().
 		From("golang:latest").
 		WithDirectory("/work", m.Src).
-		WithWorkdir("/work").
+		WithWorkdir("/work/dagmcps").
 		WithExec([]string{"go", "build", "-o", "dagmcps"}).
 		File("./dagmcps")
 }
