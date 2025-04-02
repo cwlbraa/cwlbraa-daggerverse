@@ -1,7 +1,14 @@
 {
   "name": "mcp-caller",
-  "engineVersion": "v0.17.3-250331163836-9f4b215a56ab",
+  "engineVersion": "v0.18.2-010101000000-dev-53ef80a0c4a3",
   "sdk": {
     "source": "go"
-  }
+  },
+  "dependencies": [
+    {
+      "name": "wolfi",
+      "source": "github.com/dagger/dagger/modules/wolfi",
+      "pin": "9f4b215a56abef7a91ed52a9687c2e54a4307b1a"
+    }
+  ]
 }
