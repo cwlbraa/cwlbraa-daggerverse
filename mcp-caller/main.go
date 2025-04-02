@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"dagger/mcp-caller/internal/dagger"
 )
 
@@ -30,6 +31,12 @@ func (m *McpCaller) MCPAWS() *dagger.Container {
 func (m *McpCaller) LlmWithMCP() *dagger.LLM {
 	return dag.LLM().
 		WithMCP(m.MCPGSearch()).
-		// WithMCP(m.MCPAWS()).
 		WithPrompt("list your available tools")
+}
+
+// with-dev dagger -c "llm-with-mcp | with-prompt 'search google for hello world. use the us locale. and show me the result urls.'| last-reply"
+func (m *McpCaller) Example(ctx context.Context) *dagger.LLM {
+	return m.LlmWithMCP().WithPrompt(
+		"search google for hello world. use the us locale. and show me the result urls.",
+	)
 }
