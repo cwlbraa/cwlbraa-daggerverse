@@ -1,6 +1,6 @@
 {
   "name": "mcp-caller",
-  "engineVersion": "v0.18.2-010101000000-dev-53ef80a0c4a3",
+  "engineVersion": "v0.18.2-250402163637-49faaf840e41",
   "sdk": {
     "source": "go"
   },
